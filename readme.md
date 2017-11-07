@@ -1,5 +1,5 @@
 # Sisyphus
-is a testing framework. Code, test, repeat. Onerous, to be sure. Like rolling a boulder up a hill.
+is a testing framework. Code, test, fail, repeat. Like rolling a boulder up a hill.
 
 Test suites...
 - Are arrays of assertions
