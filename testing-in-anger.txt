@@ -1,0 +1,229 @@
+Why are testing frameworks so complicated?
+
+mocha: look at all those shimmed-in globals
+chai: where is the kitchen sink?
+expect.js: bdd is... talkative
+karma: what doesn't it do? it says "simple" and then it isn't
+jasmine: is this... mocha and chai again?
+buster: what's a "focus rocket"? also: unmaintained
+jest: requires... webpack? how do i put this in my browser?
+tape: pretty good! but node-only
+node-tap: also node-only
+ava: very node-only
+qunit: not bad! but we can make it simpler.
+
+I think a testing framework doesn't need to do very much. It has two parts: a testing library, and a
+test runner. It should work in browsers and node without changing its setup. Here's all I want:
+
+The testing library should provide:
+
+- 2 types of test:
+  - t.eq: deep equality checking, equivalent to refeq except for objects and arrays
+  - t.refeq: regular equality for primitives; referential equality for objects and arrays
+- Small conveniences:
+  - t.ok: check for `true`; shorthand for t.refeq(expr)(true)
+
+And the runner should:
+
+Create a harness you can pass around to define your tests. The harness offers:
+
+- 1 unit of organization:
+  - t.suite('suite description', t => ...)
+- 1 way to get your results:
+  - t.results
+
+And a suite of tests? Is just an array of checks. If a check returns true, it succeeds. Otherwise,
+it fails. That's all there is to it.
+
+In simple form:
+
+```
+import assertions from '@sisyphus/verisimilitude'
+import runner     from '@sisyphus/sisyphus'
+
+const harness = runner({ assertions })
+
+harness.suite(`true is true`, t => [
+  _ => t.ok(true),
+])
+```
+
+The goal here is to make things simple. "Simple" doesn't mean "less code." "Simple" means that
+everything is clear and makes sense. Here's what happens in the above code:
+
+1. Import some assertions
+2. Import the test runner
+3. Create a harness out of the runner and assertions
+4. Define tests on the harness
+
+That's it. It's all there in the code. If you want to know what assertions are defined, then look at
+the assertions library. The harness should only ever define one method, `suite`, which is used for
+defining suites of tests. These are run immediately, and their output is streamed to `console` by
+default. If you want to get a buffered listing of your tests and their results, just check
+`harness.results`.
+
+Test results are both streamed and buffered for summarization. If you don't want the stream, you can
+just set the streaming reporter to a no-op. If you don't want to use the buffer at the end, then
+don't.
+
+```
+import assertions from '@sisyphus/verisimilitude'
+import runner     from '@sisyphus/sisyphus'
+
+function noop () {}
+const harness = runner({ assertions }, { stream: noop })
+
+harness.suite(`true is true`, t => [
+  _ => t.ok(true),
+])
+
+// Assuming you've written a summarize(...) function:
+summarize(harness.results)
+```
+
+What about exceptions? Well, import some new test methods for them.
+```
+import assertions from '@sisyphus/verisimilitude'
+import exceptions from '@sisyphus/contretemps'
+import runner     from '@sispyhus/sisyphus'
+
+const harness = runner({ assertions, exceptions })
+
+// Now there's a `t.expect(...)`
+harness.suite(`oh no`, t => [
+  _ => t.expect(_ => { throw new Error('boom') })
+])
+```
+
+No big deal. Oh, problem? You want to test Error subclasses? You can't. JavaScript doesn't really
+allow error subclasses. However, if you like, you can test the message.
+
+```
+import assertions from '@sisyphus/verisimilitude'
+import exceptions from '@sisyphus/contretemps'
+import runner     from '@sispyhus/sisyphus'
+
+const harness = runner({ assertions, exceptions })
+
+const booms = _ => { throw new Error('boom') }
+
+// Just a little utility for grabbing the error.
+const nab = throws => { try { throws() } catch (e) { return e } }
+
+// The full test suite.
+harness.suite(`oh no`, t => [
+  _ => t.expect(booms),
+  _ => t.eq('boom')(nab(booms).message)
+])
+```
+
+There. Didn't even need another import!
+
+What about asynchronous stuff? If a test returns a promise, the runner resolves it. If any of your
+tests returns a promise, `harness.results` will also be a promise.
+
+```
+harness.suite(`promises, promises`, t => [
+  async _ => {
+    await wait(5)
+    return t.ok(true)
+  },
+  async _ => t.eq(5)(await Promise.resolve(5)),
+  _ => t.ok(true),
+])
+
+/* Note that tests complete sychronously:
+ * The 2nd test will wait for the 1st test to end,
+ * and the 3rd test will wait for the 2nd one.
+ */
+
+// Note that `harness.results` will be a promise now.
+console.log(await harness.results)
+```
+
+Look at that. It just works.
+
+Suppose you want something fancy from your assertions, like diffs. Then... return them. From the
+assertion. Just return a Boolean object with additonal information on it. The harness will use
+`valueOf` on all results to ensure that Booleans are treated like boolean primitives. So, you can
+write something like so:
+
+```
+import _assertions from '@sisyphus/verisimilitude'
+
+const diff = /* some diff algorithm; don't ask me */
+const assertions = {
+  eq: a => b => {
+    return Object.defineProperty(new Boolean(_assertions.eq(a)(b)), 'diff', { value: diff(a)(b) })
+  }
+}
+
+import runner from '@sisyphus/sisyphus'
+const harness = runner({ assertions })
+
+harness.suite(`what's the difference?`, t => [
+  _ => t.eq('hello')('hey'),
+])
+
+harness.results.map(({ diff }) => console.log(diff)) // ta-da
+```
+
+Hey, hey, hey! Now you've got diffs.
+
+Now let's do something really crazy. Let's add browser automation!
+
+```
+import assertions from '@sisyphus/verisimilitude'
+import browser    from '@sisyphus/reckless'
+import runner     from '@sisyphus/sisyphus'
+
+const harness = runner({ assertions, browser })
+
+// Tiny utility for testing that some dom is centered at a coordinate.
+const centered_at = ([ x, y ]) => dom => {
+  const rect = dom.getBoundingClientRect()
+  return x === (rect.x + rect.width  / 2)
+      && y === (rect.y + rect.height / 2)
+}
+
+harness.suite(`click on a thing`, t => [
+  _ => {
+    const browser = t.browser()
+    browser.click(thing.position.xy)
+    const my_click_menu = browser.$(`#my-click-menu`)
+    return my_click_menu.classList.contains(`open`)
+        && centered_at(thing.position.xy)(my_click_menu)
+  }
+])
+```
+
+Whoa. Fancy. So what does `reckless` support? Name a UI event. It supports it. Just make an event
+you'd like to see happen, and `reckless` will crash -- I mean, `reckless` will *drive* -- the
+browser to perform it.
+
+Do you want to test things that aren't in the DOM? Too bad. You can't test pop-up windows, confirms,
+alerts, console messages, the built-in rightclick menu, or `<select>` dropdowns. (That last one is
+fun: `<select>` dropdowns are legitimately not part of the DOM. So... figure that one out.)
+
+If you want to test those things, use Selenium or something.
+
+Want to test something to do with the other stuff in the DOM API? Like `window` or `document` or
+whatever? Well you're in luck, because those things aren't part of `reckless` at all! If you're
+using `reckless`, then your tests must already be running in a browser. Just use `window` and
+`document`. You probably want to refresh the page between tests to clear up any DOM changes that
+have occurred and start with a clean state. Don't worry: sisyphus persists your testing progress to
+LocalStorage or IndexedDB or something. After the refresh, you'll pick up right where you left off.
+
+You can easily write your tests inside your modules, too. Just export a function that takes the
+sisyphus test harness as its argument:
+
+```
+import assertions from '@sisyphus/verisimilitude'
+import runner     from '@sisyphus/sisyphus'
+
+const harness = runner({ assertions })
+
+import my_module from 'my-module'
+
+my_module.test(harness)
+```
