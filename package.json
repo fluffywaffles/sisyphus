@@ -4,7 +4,7 @@
   "description": "cursed to try to maintain passing tests for all eternity",
   "main": "lib/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx rollup -f cjs sanity/check.js | node"
   },
   "repository": {
     "type": "git",
@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/fluffywaffles/sisyphus/issues"
   },
-  "homepage": "https://github.com/fluffywaffles/sisyphus#readme"
+  "homepage": "https://github.com/fluffywaffles/sisyphus#readme",
+  "devDependencies": {
+    "rollup": "^0.51.1"
+  }
 }
