@@ -1,4 +1,4 @@
-import { each } from '../lib/μtil'
+import { each } from '../lib/mutil'
 import suite, { ok, eq, refeq } from '../lib/index'
 
 // Sanity checks: silence == sanity
