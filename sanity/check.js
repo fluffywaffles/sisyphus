@@ -1,5 +1,7 @@
 import { each } from '../lib/mutil'
-import suite, { ok, eq, refeq } from '../lib/index'
+import runner, { verisimilitude } from '../lib/index'
+
+const { ok, eq, refeq } = verisimilitude
 
 // Sanity checks: silence == sanity
 const some_obj = { a: 5 }
@@ -41,7 +43,9 @@ each((assert, i) => {
   _ => !eq([ { a: { set b (v) { } } } ])([ { a: { get b ( ) { } } } ]),
 ])
 
-const results = suite(`things are as they appear`, t => [
+const suite = runner()
+
+const results = suite(`things are as they appear`, [
   t => t.ok(true),
   t => !t.ok(false),
   t => t.eq(5)(5),
