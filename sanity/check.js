@@ -6,6 +6,7 @@ const { ok, eq, refeq } = verisimilitude
 // Sanity checks: silence == sanity
 const some_obj = { a: 5 }
     , get_set  = { get a () { return 5 }, set a (v) { /* side-effect */ } }
+    , f = function () {}
 each((assert, i) => {
   if (!assert()) console.error('failure!', i, assert)
 })([
@@ -29,6 +30,8 @@ each((assert, i) => {
   _ => eq([])([]),
   _ => eq([{},{}])([{},{}]),
   _ => eq([[[]]])([[[]]]),
+  _ => eq(f)(f),
+  _ => !eq(function () {})(function () {}),
   // NOTE: NaN isn't NaN so I am going to pretend NaN does not exist lalalala la la la
   //_ => eq(NaN)(NaN),
   _ => !eq([ 1, 2, 3 ])([ 1, 2, 4 ]),
