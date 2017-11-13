@@ -42,6 +42,7 @@ each((assert, i) => {
   _ => !eq({ a: 5  })({ get a() { return 5 }}),
   // getters and setters must be refeq to be eq
   _ => eq(get_set)(get_set),
+  _ => !eq({ get a () {  } })({ get a () {  } }),
   _ => !eq(get_set)({ get a () { return 5 }, set a (v) { /* side-effect */ } }),
   _ => !eq([ { a: { set b (v) { } } } ])([ { a: { get b ( ) { } } } ]),
 ])
