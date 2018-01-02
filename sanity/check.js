@@ -56,4 +56,5 @@ const results = suite(`things are as they appear`, [
   t => t.eq(some_obj)(some_obj),
   t => !t.eq({ get a () { return 7 } })({ get a () { return 7 } }),
   t => t.refeq(5)(5),
+  t => t.eq({ a: 5, b: 3 })({ b: 3, a: 5 }),
 ])
