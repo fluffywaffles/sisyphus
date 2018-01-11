@@ -1,5 +1,5 @@
-import { each } from '../lib/mutil'
-import runner, { verisimilitude } from '../lib/index'
+import { all, each } from '../lib/mutil'
+import runner, { make_aggregator, summarizer, stateful, verisimilitude } from '../lib/index'
 
 const { ok, eq, refeq } = verisimilitude
 
@@ -47,7 +47,7 @@ each((assert, i) => {
   _ => !eq([ { a: { set b (v) { } } } ])([ { a: { get b ( ) { } } } ]),
 ])
 
-const suite = runner()
+const suite = runner(stateful)
 
 const results = suite(`things are as they appear`, [
   t => t.ok(true),
@@ -58,3 +58,5 @@ const results = suite(`things are as they appear`, [
   t => t.refeq(5)(5),
   t => t.eq({ a: 5, b: 3 })({ b: 3, a: 5 }),
 ])
+
+all(v => v === true)(results) || (_ => { throw new Error(`test failure`) })()
