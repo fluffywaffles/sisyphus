@@ -35,6 +35,7 @@ each((assert, i) => {
   // NOTE: NaN isn't NaN so I am going to pretend NaN does not exist lalalala la la la
   //_ => eq(NaN)(NaN),
   _ => !eq([ 1, 2, 3 ])([ 1, 2, 4 ]),
+  _ => !eq([ [ 1 ], 2, 3 ])([ [ 2 ], 2, 3 ]),
   _ => !eq({ a: 5 })({ b: 5 }),
   _ => eq([ 1, 2, 3 ])([ 1, 2, 3 ]),
   _ => eq({ a: 5 })({ a: 5 }),
