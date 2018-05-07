@@ -1,6 +1,6 @@
 {
   "name": "@sisyphus/sisyphus",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "cursed to try to maintain passing tests for all eternity",
   "main": "lib/index.js",
   "scripts": {
@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/fluffywaffles/sisyphus#readme",
   "devDependencies": {
-    "rollup": "^0.51.1"
+    "rollup": "^0.57.1"
   },
   "directories": {
     "lib": "lib"
