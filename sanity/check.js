@@ -1,5 +1,5 @@
-import { all, each } from '../lib/mutil'
-import runner, { make_aggregator, summarizer, stateful, verisimilitude } from '../lib/index'
+import { all, each } from '@prettybad/util'
+import sisyphus, { stateful, verisimilitude } from '../lib/index'
 
 const { ok, eq, refeq } = verisimilitude
 
@@ -7,6 +7,7 @@ const { ok, eq, refeq } = verisimilitude
 const some_obj = { a: 5 }
     , get_set  = { get a () { return 5 }, set a (v) { /* side-effect */ } }
     , f = function () {}
+
 each((assert, i) => {
   if (!assert()) console.error('failure!', i, assert)
 })([
@@ -32,8 +33,7 @@ each((assert, i) => {
   _ => eq([[[]]])([[[]]]),
   _ => eq(f)(f),
   _ => !eq(function () {})(function () {}),
-  // NOTE: NaN isn't NaN so I am going to pretend NaN does not exist lalalala la la la
-  //_ => eq(NaN)(NaN),
+  _ => eq(NaN)(NaN),
   _ => !eq([ 1, 2, 3 ])([ 1, 2, 4 ]),
   _ => !eq([ [ 1 ], 2, 3 ])([ [ 2 ], 2, 3 ]),
   _ => !eq({ a: 5 })({ b: 5 }),
@@ -48,7 +48,7 @@ each((assert, i) => {
   _ => !eq([ { a: { set b (v) { } } } ])([ { a: { get b ( ) { } } } ]),
 ])
 
-const suite = runner(stateful)
+const suite = sisyphus(stateful)
 
 const results = suite(`things are as they appear`, [
   t => t.ok(true),
