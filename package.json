@@ -4,7 +4,7 @@
   "description": "cursed to try to maintain passing tests for all eternity",
   "main": "lib/index.mjs",
   "scripts": {
-    "test": "npx rollup -c --environment input:sanity/check.mjs | node"
+    "test": "npx rollup -c rollup.config.js -- sanity/check.mjs | node"
   },
   "repository": {
     "type": "git",
@@ -19,12 +19,13 @@
   "homepage": "https://github.com/fluffywaffles/sisyphus#readme",
   "devDependencies": {
     "rollup": "^0.57.1",
-    "rollup-plugin-node-resolve": "^3.4.0"
+    "rollup-plugin-node-resolve": "^3.4.0",
+    "source-map-support": "^0.5.13"
   },
   "directories": {
     "lib": "lib"
   },
   "dependencies": {
-    "@prettybad/util": "0.0.38"
+    "@prettybad/util": "^0.1.0"
   }
 }

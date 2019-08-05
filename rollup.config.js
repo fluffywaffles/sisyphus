@@ -1,14 +1,15 @@
 import resolve from 'rollup-plugin-node-resolve'
 
-const input = process.env.input
-
-export default {
-  input,
-  output: {
-    name: `sisyphus`,
-    format: `umd`,
-  },
-  plugins: [
-    resolve(),
-  ],
+function mkbuild ({ input }) {
+  return {
+    input,
+    output: {
+      name: `sisyphus`,
+      format: `umd`,
+      sourcemap: `inline`,
+    },
+    plugins: [ resolve() ],
+  }
 }
+
+export default mkbuild({ input: process.argv[0] })
