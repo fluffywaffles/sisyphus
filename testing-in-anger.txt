@@ -43,8 +43,8 @@ import runner     from '@sisyphus/sisyphus'
 
 const harness = runner({ assertions })
 
-harness.suite(`true is true`, t => [
-  _ => t.ok(true),
+harness.suite(`true is true`, [
+  t => t.ok(true),
 ])
 ```
 
@@ -118,30 +118,6 @@ harness.suite(`oh no`, t => [
 ```
 
 There. Didn't even need another import!
-
-What about asynchronous stuff? If a test returns a promise, the runner resolves it. If any of your
-tests returns a promise, `harness.results` will also be a promise.
-
-```
-harness.suite(`promises, promises`, t => [
-  async _ => {
-    await wait(5)
-    return t.ok(true)
-  },
-  async _ => t.eq(5)(await Promise.resolve(5)),
-  _ => t.ok(true),
-])
-
-/* Note that tests complete sychronously:
- * The 2nd test will wait for the 1st test to end,
- * and the 3rd test will wait for the 2nd one.
- */
-
-// Note that `harness.results` will be a promise now.
-console.log(await harness.results)
-```
-
-Look at that. It just works.
 
 Suppose you want something fancy from your assertions, like diffs. Then... return them. From the
 assertion. Just return a Boolean object with additonal information on it. The harness will use
