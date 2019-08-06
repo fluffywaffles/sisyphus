@@ -19,3 +19,13 @@ Also...
 - Don't write tests for your types (write types for your types)
 - Don't write tests for your tests (write tests for your code)
 - Never write a test instead of an assertion (make guarantees!)
+
+## Proof of Concept: Invisible Method Interceptors
+
+See `lib/proof-of-concept.mjs`.
+
+Run it. Observe magic.
+
+```
+$ npm run --silent build -- lib/proof-of-concept.mjs | node
+```

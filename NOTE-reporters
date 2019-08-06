@@ -1,0 +1,56 @@
+==========================================================================
+Sisyphus Reporters
+==========================================================================
+
+Sisyphus is a rather unique testing library. Assertions are just normal
+functions that return a boolean result (in other words, "predicates"). I
+don't know of any other testing library that supports using normal
+predicates as assertions. In order to accomplish this, however, Sisyphus
+reporters take on some extra cognitive complexity.
+
+Why do I say "cognitive" complexity? Because reporters are actually
+deceptively simple: all a reporter needs to do, is:
+
+1) receive a message, then
+2) return a reporter for the next message.
+
+In other words, a reporter is just a function that takes a message,
+processes it, and returns another reporter (in the simplest case, itself).
+
+The complexity of reporters is really not their design. It's their
+implementation. Functions that return functions in a (theoretically
+endless) chain are sort of wonky and hard to wrap your head around.
+
+Some additional complexity arises from this "message" concept. While
+Sisyphus is evaluating tests, it streams messages to the reporter. These
+messages have a clear sequence:
+
+While there exists a test suite to evaluate:
+
+1. For each suite:
+    send 1 'test:suite' message
+  2. For each test in the suite:
+      send 1 'test:prerun' message
+    3. For each assertion in the test:
+        send some number of `assertion:value` messages
+        finally, send 1 `assertion:result` message after all the values
+    4. Then, after all the assertions:
+      send 1 `test:result` message
+
+So, reporters are expected to produce message receivers in this particular
+order:
+
+1. Suite receiver
+2. Test prerun receiver
+3. Assertion receiver(s)
+4. Test result receiver
+
+Where an `assertion:value` receiver will continue to return itself until
+an `assertion:result` message is received, and a `test:result` receiver
+will return a `test:suite` receiver, so that the series of receivers
+repeats until the full set of test suites has been evaluated.
+
+In order to make the series of receivers terminate, the model is
+simplified: there is only 1 suite, but it can contain sub-suites. So, once
+the top-level suite has been evaluated, the full test suite is considered
+complete.
