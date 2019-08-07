@@ -4,7 +4,8 @@
   "description": "cursed to try to maintain passing tests for all eternity",
   "main": "lib/index.mjs",
   "scripts": {
-    "test": "npx rollup -c rollup.config.js -- sanity/check.mjs | node -r source-map-support/register"
+    "build": "npx rollup -c rollup.config.js",
+    "test": "npm run --silent build -- sanity/check.mjs | node -r source-map-support/register"
   },
   "repository": {
     "type": "git",
