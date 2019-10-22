@@ -3,6 +3,8 @@
   - Sisyphus core should be readable
 - Handle prototypes correctly
   - Recursive `eq` on Object.getPrototypeOf
-- Split verisimilitude and assertions, generally, from core library
+- Split verisimilitude (and assertions, generally) from core library
 - Split out the reporter(s)
 - Revisit (and hopefully simplify) 'stateful' reporter
+- Refactor so that `test` takes a `t`, not a `suite`
+  - Now all of the APIs are consistent.
