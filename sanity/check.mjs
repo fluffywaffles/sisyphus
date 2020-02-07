@@ -1,5 +1,5 @@
 import { all, map, each, ᐅlog, flatten } from '@prettybad/util'
-import sisyphus, { verisimilitude } from '../lib/index'
+import sisyphus, { verisimilitude } from '../lib/index.mjs'
 
 const { ok, eq, refeq } = verisimilitude
 
