@@ -27,6 +27,6 @@
     "lib": "lib"
   },
   "dependencies": {
-    "@prettybad/util": "^0.1.0"
+    "@prettybad/util": "latest"
   }
 }
