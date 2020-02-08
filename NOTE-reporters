@@ -4,53 +4,63 @@ Sisyphus Reporters
 
 Sisyphus is a rather unique testing library. Assertions are just normal
 functions that return a boolean result (in other words, "predicates"). I
-don't know of any other testing library that supports using normal
-predicates as assertions. In order to accomplish this, however, Sisyphus
-reporters take on some extra cognitive complexity.
+don't know of any other testing library that uses plain predicates as
+assertions. The trade for this simplicity, however, is that Sisyphus
+reporters take on some extra complexity.
 
-Why do I say "cognitive" complexity? Because reporters are actually
-deceptively simple: all a reporter needs to do, is:
+The complexity is not so much in the interface for reporters, but in
+understanding how they work. Ultimately all a reporter needs to do is:
 
-1) receive a message, then
+1) receive a message and modify it (if desired); then,
 2) return a reporter for the next message.
 
 In other words, a reporter is just a function that takes a message,
 processes it, and returns another reporter (in the simplest case, itself).
 
-The complexity of reporters is really not their design. It's their
+So the complexity is not really in the design of reporters. It's in their
 implementation. Functions that return functions in a (theoretically
-endless) chain are sort of wonky and hard to wrap your head around.
+endless) chain are sort of wonky and hard to wrap your head around. (These
+are also sometimes known as 'generators' or 'iterators', although most
+generator or iterator interfaces you can probably call to mind are
+object-based, using classes, rather than function-based.)
 
-Some additional complexity arises from this "message" concept. While
-Sisyphus is evaluating tests, it streams messages to the reporter. These
-messages have a clear sequence:
+The complexity really arises from this "message" concept. Basically,
+reporters intercept "messages" from Sisyphus assertions. In other words,
+Sisyphus streams information and results to the reporter while it is
+evaluating a test suite.
 
-While there exists a test suite to evaluate:
+Messages occur in predictable sequences. So, a reporter can take advantage
+of its knowledge of the message types to behave appropriately. In
+Sisyphus, the pattern looks like this:
 
-1. For each suite:
+1. For each defined test suite:
     send 1 'test:suite' message
   2. For each test in the suite:
       send 1 'test:prerun' message
     3. For each assertion in the test:
-        send some number of `assertion:value` messages
-        finally, send 1 `assertion:result` message after all the values
-    4. Then, after all the assertions:
-      send 1 `test:result` message
+        intercept the assertion predicate; this will send either:
+        - 2 messages of the following pattern:
+          - 1 'intercept/target:{assertion-name}/arguments'
+          - 1 'intercept/target:{assertion-name}/result'
+        - or, ≥ 3 messages of the following pattern:
+          - ≥ 1 sequences of:
+            - 1 'intercept/target:{assertion-name}/arguments'
+            - 1 'intercept/target:{assertion-name}/continuation'
+          - 1 terminating 'intercept/target:{assertion-name}/result'
+    4. Then, once the test is complete:
+      send 1 'test:result' message
 
-So, reporters are expected to produce message receivers in this particular
-order:
+So, a reporter is expected be:
 
 1. Suite receiver
 2. Test prerun receiver
-3. Assertion receiver(s)
+3. Assertion interceptor receiver
 4. Test result receiver
 
-Where an `assertion:value` receiver will continue to return itself until
-an `assertion:result` message is received, and a `test:result` receiver
-will return a `test:suite` receiver, so that the series of receivers
-repeats until the full set of test suites has been evaluated.
+Conducting itself appropriately according to the message received, and
+erroring if any of the sequence constraints described above is violated.
+(For example, a reporter should fail fatally if it receives 'test:prerun'
+twice in a row without receiving a 'test:result' in between.)
 
-In order to make the series of receivers terminate, the model is
-simplified: there is only 1 suite, but it can contain sub-suites. So, once
-the top-level suite has been evaluated, the full test suite is considered
-complete.
+A basic reporter is implemented at `lib/reporter.mjs`, which can be used
+as a reference for additional implementations.
