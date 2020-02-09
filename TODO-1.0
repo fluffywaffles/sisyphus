@@ -1,10 +1,24 @@
-- Clean-up the code
-  - Verisimilitude should be readable
-  - Sisyphus core should be readable
-- Handle prototypes correctly
-  - Recursive `eq` on Object.getPrototypeOf
-- Split verisimilitude (and assertions, generally) from core library
+- ~Clean-up the code~
+  - ~Verisimilitude should be readable~
+  - ~Sisyphus core should be readable~
+- ~Handle prototypes correctly~
+  - ~Recursive `eq` on Object.getPrototypeOf~
+
 - Split out the reporter(s)
-- Revisit (and hopefully simplify) 'stateful' reporter
-- Refactor so that `test` takes a `t`, not a `suite`
-  - Now all of the APIs are consistent.
+  - ~Simplified method-interceptor-based reporter interface~
+  - ~Default reporters~ we have noop, debug (prints tests), and simple
+  - Composeable reporters
+    - Assertion-printing reporter composer (basically, 'debug' as a mixin)
+    - Aggregating reporter composer
+    - Time-profiling reporter composer
+  - Reimplement stateful argument-displaying reporter (based on 'simple')
+- Refactor so that `sisyphus` itself takes a `t`, not a `suite`
+  - Today, `suite` takes an array of tests; it should take a `t`
+  - This will make the API more consistent between `suite` and `test`
+- Revisit documentation
+  - Update README
+  - Update other textual docs
+  - Clean-up commentary in code
+
+- Should we, actually? Hmm... probably not worth it.
+  - Split verisimilitude (and assertions, generally) from core library
