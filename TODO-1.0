@@ -15,7 +15,7 @@
 - ~Refactor so that `sisyphus` returns a harness (`t`), not a `suite`~
   - ~This will make the API more consistent between `suite` and `test`~
 - Revisit documentation
-  - Update README
+  - ~Update README~
   - Update other textual docs
   - Clean-up commentary in code
 
