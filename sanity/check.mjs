@@ -68,7 +68,7 @@ const some_obj = { a: 5 }
     _ => eq({ a: 5, b: 3 })({ b: 3, a: 5 }),
   ])
   const [ s, ns ] = process.hrtime(start_time)
-  console.log(`${s}s ${ns/1e6}ms`, `\tasserts total`)
+  console.log(`${s}s\t${ns/1e6}ms`, `\ttotal`)
   console.log(`\n<< end asserts`)
 }
 
@@ -105,7 +105,7 @@ const some_obj = { a: 5 }
     ]),
   ])
   const [ s, ns ] = process.hrtime(start_time)
-  console.log(`${s}s ${ns/1e6}ms`, `\tsuite total`)
+  console.log(`${s}s ${ns/1e6}ms`, `\tsuite`)
 
   if (!all(v => v === true)(flatten(results))) {
     throw new Error(`test failure`)
