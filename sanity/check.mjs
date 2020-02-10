@@ -73,7 +73,7 @@ const some_obj = { a: 5 }
 }
 
 {
-  const suite = sisyphus({ reporter: reporters.simple })
+  const harness = sisyphus({ reporter: reporters.simple })
 
   function time_t (test) {
     return set.values.mut({
@@ -91,7 +91,7 @@ const some_obj = { a: 5 }
 
   console.log(`\n>> begin suite\n`)
   const start_time = process.hrtime()
-  const results = suite(`things are as they appear`, [
+  const results = harness.suite(`things are as they appear`, [
     t => t.ok(true),
     t => !t.ok(false),
     t => t.eq(5)(5),

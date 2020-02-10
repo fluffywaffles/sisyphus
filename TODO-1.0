@@ -12,9 +12,8 @@
     - Aggregating reporter composer
     - Time-profiling reporter composer
   - Reimplement stateful argument-displaying reporter (based on 'simple')
-- Refactor so that `sisyphus` itself takes a `t`, not a `suite`
-  - Today, `suite` takes an array of tests; it should take a `t`
-  - This will make the API more consistent between `suite` and `test`
+- ~Refactor so that `sisyphus` returns a harness (`t`), not a `suite`~
+  - ~This will make the API more consistent between `suite` and `test`~
 - Revisit documentation
   - Update README
   - Update other textual docs
