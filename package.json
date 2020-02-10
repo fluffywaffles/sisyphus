@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/fluffywaffles/sisyphus#readme",
   "devDependencies": {
+    "cloc": "^2.5.1",
     "rollup": "^0.57.1",
     "rollup-plugin-node-resolve": "^3.4.0",
     "source-map-support": "^0.5.13"
