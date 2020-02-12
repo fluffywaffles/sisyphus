@@ -8,7 +8,6 @@ Test suites...
 - Don't have a crazy DSL
 - Run in browsers
 - Output wherever you want, and look pretty (devtools, for starters)
-- Support high-level browser automation (for integration testing)
 
 Tests...
 - Are written with eq and refeq
