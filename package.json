@@ -1,6 +1,6 @@
 {
   "name": "@sisyphus/sisyphus",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "cursed to try to maintain passing tests for all eternity",
   "main": "lib/index.mjs",
   "scripts": {
