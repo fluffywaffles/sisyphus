@@ -1,11 +1,15 @@
 import {
   ᐅ,
+  ᐅwhen,
   ᐅeffect,
+  is,
   all,
+  any,
   get,
   set,
   map,
   each,
+  reflex,
   flatten,
 } from '@prettybad/util'
 
@@ -103,11 +107,17 @@ const some_obj = { a: 5 }
       t => t.eq(1)(1),
       t => t.eq({ a: 5 })({ a: 5 }) && t.eq({ b: 2 })({ b: 2 }),
     ]),
+    t => t.suite(`shorthand subsuite`, {
+      'sub-sub-suite a': [ t => t.ok(true) ],
+      'sub-sub-suite b': [ t => t.ok(true) ],
+    }),
   ])
   const [ s, ns ] = process.hrtime(start_time)
   console.log(`${s}s ${ns/1e6}ms`, `\tsuite`)
 
-  if (!all(v => v === true)(flatten(results))) {
+  const deep_flatten = messages =>
+    ᐅwhen(any(reflex.instance.Array))(ᐅ([ flatten, deep_flatten ]))
+  if (!all(is(true))(deep_flatten(results))) {
     throw new Error(`test failure`)
   }
   console.log(`\n<< end suite`)
