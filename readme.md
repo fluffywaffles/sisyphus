@@ -1,6 +1,8 @@
 # Sisyphus
-is an alarmingly decent testing framework in less than 500 LOC. Code,
-test, fail, repeat. Like rolling a boulder up a hill.
+## make no easy mistakes
+An alarmingly decent testing framework in less than 500 LOC.
+
+Code, test, fail, repeat. Like rolling a boulder up a hill.
 
 Test suites...
 - Are arrays of assertions
